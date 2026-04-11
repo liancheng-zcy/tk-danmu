@@ -1,0 +1,2 @@
+# Python dependencies for TikTok Live Danmu SDK
+websockets>=12.0
