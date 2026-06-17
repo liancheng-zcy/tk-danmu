@@ -1,0 +1,45 @@
+{
+  "name": "tiktok-danmu-translator-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TikTok 弹幕翻译桌面工具",
+  "type": "module",
+  "workspaces": [
+    "worker"
+  ],
+  "scripts": {
+    "dev": "npm run prepare:sidecar && concurrently -k \"npm:dev:vite\" \"npm:dev:worker\"",
+    "dev:vite": "vite --host 0.0.0.0 --port 1420 --strictPort",
+    "dev:worker": "tsc -p worker/tsconfig.json --watch --preserveWatchOutput",
+    "build": "npm run build:worker && vite build && npm run prepare:sidecar",
+    "build:worker": "tsc -p worker/tsconfig.json && node scripts/build-worker-bundle.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "postinstall": "npm install --prefix worker --no-workspaces",
+    "prepare:sidecar": "node scripts/prepare-sidecar.mjs",
+    "tauri": "tauri"
+  },
+  "dependencies": {
+    "@tanstack/react-virtual": "^3.14.3",
+    "@tauri-apps/api": "^2.8.0",
+    "@tauri-apps/plugin-shell": "^2.3.1",
+    "@tauri-apps/plugin-store": "^2.4.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2.8.0",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.2",
+    "concurrently": "^9.2.1",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.9.2",
+    "vite": "^7.1.3",
+    "vitest": "^3.2.4"
+  }
+}

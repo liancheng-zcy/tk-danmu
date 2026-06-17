@@ -35,6 +35,13 @@ ENV/
 
 # Node.js - 忽略node_modules（用户可自行npm install）
 node_modules/
+worker/dist/
+worker/bundle/
+dist/
+shared/*.js
+shared/*.js.map
+src-tauri/target/
+src-tauri/binaries/
 
 # Logs
 *.log
