@@ -1,0 +1,9 @@
+{
+  "name": "tiktok-danmu-worker",
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "https-proxy-agent": "^7.0.6",
+    "tiktok-live-connector": "^2.4.0"
+  }
+}
