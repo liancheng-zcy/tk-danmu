@@ -10,16 +10,6 @@
     "core:webview:allow-create-webview-window",
     "core:window:allow-minimize",
     "core:window:allow-toggle-maximize",
-    "core:window:allow-close",
-    {
-      "identifier": "shell:allow-execute",
-      "allow": [
-        {
-          "name": "binaries/node",
-          "sidecar": true,
-          "args": true
-        }
-      ]
-    }
+    "core:window:allow-close"
   ]
 }

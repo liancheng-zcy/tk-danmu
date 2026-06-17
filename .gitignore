@@ -38,6 +38,7 @@ node_modules/
 worker/dist/
 worker/bundle/
 dist/
+tiktok_connector/dist/
 shared/*.js
 shared/*.js.map
 src-tauri/target/

@@ -677,10 +677,11 @@ mod tests {
 
     #[test]
     fn resolves_worker_cwd_from_script_parent() {
-        let script_path = PathBuf::from(r"D:\TikTok Danmu Translator\_up_\worker\bundle\index.cjs");
+        let script_path =
+            PathBuf::from(r"Z:\fake-project\_up_\worker\bundle\index.cjs");
         assert_eq!(
             resolve_worker_cwd(&script_path),
-            PathBuf::from(r"D:\TikTok Danmu Translator\_up_\worker\bundle")
+            PathBuf::from(r"Z:\fake-project\_up_\worker\bundle")
         );
     }
 
