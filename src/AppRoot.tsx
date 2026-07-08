@@ -28,6 +28,7 @@ import {
   minimizeWindow,
   toggleMaximizeWindow,
   closeWindow,
+  startDraggingWindow,
   isTauriRuntime
 } from './lib/tauri-client';
 import { loadSettings, saveSettings } from './lib/settings-store';
@@ -415,8 +416,6 @@ function OverlayWindowApp() {
   const [settings, setSettings] = useState<AppSettings>(DEFAULT_SETTINGS);
   const [loaded, setLoaded] = useState(false);
   const { feedEvents, notices, latestStatus, dismissNotice } = useSessionFeed();
-  const [titlebarHover, setTitlebarHover] = useState(false);
-  const titlebarTimerRef = useRef<number | null>(null);
 
   useThemeMode(settings.themeMode);
 
@@ -436,108 +435,96 @@ function OverlayWindowApp() {
     void saveSettings(settings);
   }, [loaded, settings]);
 
-  const showTitlebar = () => {
-    if (titlebarTimerRef.current !== null) {
-      clearTimeout(titlebarTimerRef.current);
-      titlebarTimerRef.current = null;
-    }
-    setTitlebarHover(true);
-  };
-
-  const hideTitlebar = () => {
-    // Small delay so moving to the button doesn't hide it immediately
-    titlebarTimerRef.current = window.setTimeout(() => {
-      setTitlebarHover(false);
-      titlebarTimerRef.current = null;
-    }, 300);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (titlebarTimerRef.current !== null) {
-        clearTimeout(titlebarTimerRef.current);
-      }
-    };
-  }, []);
-
   if (!loaded) {
     return <div className="overlay-shell">悬浮窗加载中...</div>;
   }
 
   const isTauri = isTauriRuntime();
 
+  const handleTitlebarMouseDown = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (event.button !== 0) {
+      return;
+    }
+    if ((event.target as HTMLElement).closest('.overlay-titlebar-btn')) {
+      return;
+    }
+    void startDraggingWindow();
+  };
+
   return (
-    <div
-      className="overlay-shell"
-      onMouseEnter={showTitlebar}
-      onMouseLeave={hideTitlebar}
-    >
+    <div className="overlay-shell">
       <ToastStack
         notices={notices.slice(-MAX_VISIBLE_NOTICES)}
         onDismiss={dismissNotice}
       />
 
-      {titlebarHover ? (
-        <div className="overlay-titlebar" onMouseEnter={showTitlebar} onMouseLeave={hideTitlebar}>
-          <span className="overlay-titlebar-label">
-            {latestStatus?.message ?? '弹幕悬浮窗'}
-          </span>
+      <div
+        className="overlay-titlebar"
+        data-tauri-drag-region
+        onMouseDown={handleTitlebarMouseDown}
+      >
+        <span className="overlay-titlebar-label" data-tauri-drag-region>
+          {latestStatus?.message ?? '弹幕悬浮窗'}
+        </span>
 
-          <div className="overlay-titlebar-actions">
-            <button
-              type="button"
-              className="overlay-titlebar-btn"
-              onClick={() =>
-                setSettings((current) => ({
-                  ...current,
-                  overlayMode:
-                    current.overlayMode === 'translation-only'
-                      ? 'bilingual'
-                      : 'translation-only'
-                }))
-              }
-              title="切换显示模式"
-            >
-              {settings.overlayMode === 'translation-only' ? '译' : '双'}
-            </button>
+        <div className="overlay-titlebar-actions">
+          <button
+            type="button"
+            className="overlay-titlebar-btn"
+            data-tauri-no-drag-region
+            onClick={() =>
+              setSettings((current) => ({
+                ...current,
+                overlayMode:
+                  current.overlayMode === 'translation-only'
+                    ? 'bilingual'
+                    : 'translation-only'
+              }))
+            }
+            title="切换显示模式"
+          >
+            {settings.overlayMode === 'translation-only' ? '译' : '双'}
+          </button>
 
-            {isTauri ? (
-              <>
-                <button
-                  type="button"
-                  className="overlay-titlebar-btn"
-                  onClick={() => { minimizeWindow().catch(() => {}); }}
-                  title="最小化"
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12">
-                    <rect x="1" y="5.5" width="10" height="1" fill="currentColor"/>
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className="overlay-titlebar-btn"
-                  onClick={() => { toggleMaximizeWindow().catch(() => {}); }}
-                  title="最大化"
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12">
-                    <rect x="1.5" y="1.5" width="9" height="9" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.1"/>
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  className="overlay-titlebar-btn overlay-titlebar-close"
-                  onClick={() => { closeWindow().catch(() => {}); }}
-                  title="关闭"
-                >
-                  <svg width="12" height="12" viewBox="0 0 12 12">
-                    <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
-                  </svg>
-                </button>
-              </>
-            ) : null}
-          </div>
+          {isTauri ? (
+            <>
+              <button
+                type="button"
+                className="overlay-titlebar-btn"
+                data-tauri-no-drag-region
+                onClick={() => { minimizeWindow().catch(() => {}); }}
+                title="最小化"
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <rect x="1" y="5.5" width="10" height="1" fill="currentColor"/>
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="overlay-titlebar-btn"
+                data-tauri-no-drag-region
+                onClick={() => { toggleMaximizeWindow().catch(() => {}); }}
+                title="最大化"
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <rect x="1.5" y="1.5" width="9" height="9" rx="0.8" fill="none" stroke="currentColor" stroke-width="1.1"/>
+                </svg>
+              </button>
+              <button
+                type="button"
+                className="overlay-titlebar-btn overlay-titlebar-close"
+                data-tauri-no-drag-region
+                onClick={() => { closeWindow().catch(() => {}); }}
+                title="关闭"
+              >
+                <svg width="12" height="12" viewBox="0 0 12 12">
+                  <path d="M2 2L10 10M10 2L2 10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </>
+          ) : null}
         </div>
-      ) : null}
+      </div>
 
       <MessageList
         events={feedEvents}

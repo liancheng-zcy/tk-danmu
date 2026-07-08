@@ -57,6 +57,14 @@ export async function closeWindow() {
   await getCurrentWebviewWindow().close();
 }
 
+/** Start native window dragging from the current mouse position.
+ *  Requires core:window:allow-start-dragging in capabilities. */
+export async function startDraggingWindow() {
+  if (!isTauriRuntime()) return;
+  const { getCurrentWebviewWindow } = await import('@tauri-apps/api/webviewWindow');
+  await getCurrentWebviewWindow().startDragging();
+}
+
 async function invokeCommand<T>(
   command: string,
   payload?: Record<string, unknown>

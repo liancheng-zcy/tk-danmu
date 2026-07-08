@@ -466,7 +466,7 @@ h2 {
   position: relative;
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
 }
 
@@ -481,20 +481,21 @@ h2 {
 
 /* ── Frameless overlay titlebar ── */
 .overlay-titlebar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: relative;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 36px;
+  height: 32px;
   padding: 0 8px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border-radius: 16px 16px 0 0;
+  border-radius: 12px 12px 0 0;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  flex-shrink: 0;
 }
 
 .overlay-titlebar-label {
@@ -503,6 +504,9 @@ h2 {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+  pointer-events: none;
 }
 
 .overlay-titlebar-actions {
@@ -521,6 +525,9 @@ h2 {
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.85rem;
   border-radius: 6px;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
   transition: background 100ms ease;
 }
 
