@@ -22,7 +22,10 @@ export function createTikTokConnector(config: WorkerStartConfig) {
   const connection = new TikTokLiveConnection(username, {
     ...(proxyAgent
       ? {
-          webClientOptions: { httpsAgent: proxyAgent, timeout: 30000 },
+          webClientOptions: {
+            agent: { http: proxyAgent, https: proxyAgent },
+            timeout: 30000
+          },
           wsClientOptions: { agent: proxyAgent, timeout: 30000 }
         }
       : {})
