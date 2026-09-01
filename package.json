@@ -1,6 +1,6 @@
 {
   "name": "tiktok-danmu-translator-desktop",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "TikTok 弹幕翻译桌面工具",
   "type": "module",
